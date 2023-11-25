@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { User, getUsers } from "../helpers/getUsers";
+import { validateEmail, validateNumber, inputMask, formatNumber } from "../helpers/validators";
 
 
 export function Form() {
@@ -9,17 +10,35 @@ export function Form() {
     
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const email = myRefEmail?.current?.value;
-        const number = myRefNumber?.current?.value;
+        const email = myRefEmail!.current!.value;
+        let number = myRefNumber?.current?.value;
         setResult("Searching...");
+
+        if (!validateEmail(email)) {
+          setResult("Некорректный формат email");
+          return;
+        }
+
+        if (number && !validateNumber(number)) {
+          setResult("Некорректный формат номера");
+          return;
+        }
+        
         try {
-          const result = await getUsers(email, number);
+          if (number) {
+            number = number.replace(/-/g, "");
+          }
+          const result = await getUsers({email, number});
           setResult(result);
         } catch (error) {
           setResult("Произошла ошибка при получении данных. Попробуйте повторить запрос");
           console.error(error);
         }
     };
+
+    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      myRefNumber.current!.value = inputMask(e);
+  };
 
     return (
         <div>
@@ -30,12 +49,12 @@ export function Form() {
             </div>
             <div>
               <label htmlFor="number">Number:</label>
-              <input ref={myRefNumber} type="text" inputMode="numeric" />
+              <input ref={myRefNumber} onInput={handleNumberChange} type="text" inputMode="numeric" />
             </div>
             <button type="submit">Submit</button>
           </form>
             <h2>Results</h2>
-            {typeof result !== "string" ? (result.map((user) => <><p>{user.email}</p><p>{user.number}</p></>)) : (<div><p>{result}</p></div>)}
+            {typeof result !== "string" ? (result.map((user) => <><p>{user.email}</p><p>{formatNumber(user.number)}</p></>)) : (<div><p>{result}</p></div>)}
         </div>
       );
 }

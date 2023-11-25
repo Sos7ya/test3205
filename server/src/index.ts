@@ -19,14 +19,14 @@ let currentRequest: CancelTokenSource | null = null;
 app.get("/users", async (req: express.Request<{}, {}, {}, reqQuery>, res) => {
   if (currentRequest) {
     currentRequest.cancel("Request cancelled");
-    console.log("Request cancelled");
+  
   }
 
   const source = axios.CancelToken.source();
   currentRequest = source;
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 5000)).then(() => {currentRequest = null}); // 5-секундная задержка
+    await new Promise((resolve) => setTimeout(resolve, 5000)).then(() => {}); // 5-секундная задержка
     
     const { email, number } = req.query;
 
@@ -40,7 +40,7 @@ app.get("/users", async (req: express.Request<{}, {}, {}, reqQuery>, res) => {
   }
   catch (error) {
     if (axios.isCancel(error)) {
-      console.log("Request cancelled");
+      
     } else {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });

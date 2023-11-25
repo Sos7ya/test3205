@@ -3,10 +3,16 @@ import axios from "axios";
 
 export interface User {
     email: string,
-    number?: number
+    number: number
 }
 
-export const getUsers = async (email?: string, number?: string): Promise<User[] | string> => {
+interface Iprops {
+  email: string
+  number?: string
+}
+
+export const getUsers = async (props: Iprops): Promise<User[] | string> => {
+      const { email, number } = props
       const response = await axios.get<User[]>('http://localhost:3000/users', {
         params: { email, number }
       });
