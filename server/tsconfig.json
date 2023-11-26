@@ -8,9 +8,7 @@
       "resolveJsonModule": true,
       "skipLibCheck": true
     },
-    "include": [
-      "./src"
-    ],
+    "include": ["index.ts", "models/model.ts"],
     "exclude": [
       "./dist"
     ]

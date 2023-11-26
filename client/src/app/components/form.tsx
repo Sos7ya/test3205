@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { User, getUsers } from "../helpers/getUsers";
 import { validateEmail, validateNumber, inputMask, formatNumber } from "../helpers/validators";
 
+import styles from "../app.module.css"
 
 export function Form() {
     const [result, setResult] = useState<User[] | string>("Введите запрос" as string);
@@ -41,7 +42,7 @@ export function Form() {
   };
 
     return (
-        <div>
+        <div className={styles.form}>
           <form action="submit" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email">Email:</label>
@@ -54,7 +55,7 @@ export function Form() {
             <button type="submit">Submit</button>
           </form>
             <h2>Results</h2>
-            {typeof result !== "string" ? (result.map((user) => <><p>{user.email}</p><p>{formatNumber(user.number)}</p></>)) : (<div><p>{result}</p></div>)}
+            {typeof result !== "string" ? (result.map((user) => <div className={styles.results}><p>Email: {user.email}</p><p>Number: {formatNumber(user.number)}</p></div>)) : (<div><p>{result}</p></div>)}
         </div>
       );
 }
